@@ -186,15 +186,19 @@ if __name__ == "__main__":
         print("ERROR: git-wild-hunt failed to find a github_token in the config file at {0}..exiting".format(tool_config))
         sys.exit(1)
     else:
-        results = search_github(github_token, search)
+        s = search.replace(" ", "+")
+        results = search_github(github_token, s)
     
     # lets process the search results
     count = 0 
     all_leaks = []
     for conf in results:
         count += 1
-        log.info("processing potential leak #{0} on {1}".format(count, conf['html_url']))
-        leaks = findleaks(conf, regexes)
+        if 'html_url' in conf:
+            log.info("processing potential leak #{0} on {1}".format(count, conf['html_url']))
+            leaks = findleaks(conf, regexes)
+        else:
+            continue
         for l in leaks:
             all_leaks.append(l)
 

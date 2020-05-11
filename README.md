@@ -42,21 +42,31 @@ regexes = regexes.json
 
 ### Github search examples
 
-the *-s* flag accepts any github [advance search](https://github.com/search/advanced) query, see some examples below
-
-##### Searching for Jenkins credentials.xml file
-`python git-wild-hunt.py -s "extension:yml+path:.circleci+filename:config+language:YAML"`
+the **-s** flag accepts any github [advance search](https://github.com/search/advanced) query, see some examples below
 
 ##### Find GCP JWT token files
-`python git-wild-hunt.py -s"extension:json+filename:creds+language:JSON"`
+`python git-wild-hunt.py -s "extension:json filename:creds language:JSON"`
 
-#### Find secrets in .circleci
-`python git-wild-hunt.py -s "extension:yml+path:.circleci+filename:config+language:YAML"`
+##### Find AWS API secrets
+`python git-wild-hunt.py -s "path:.aws/ filename:credentials"`
 
-#### Find AWS API secrets
+##### Find Azure JWT Token
+`python git-wild-hunt.py -s "extension:json path:.azure filename:accessTokens language:JSON"`
 
+##### Find GSUtils configs
+`python git-wild-hunt.py -s "path:.gsutil filename:credstore2"`
 
-#### Generic credentials.yml search `python git-wild-hunt.py -s "extension:yml+filename:credentials.yml+language:YAML"`
+##### Find kubernetes config files
+`python git-wild-hunt.py -s "path:.kube filename:config"`
+
+##### Searching for Jenkins credentials.xml file
+`python git-wild-hunt.py -s "extension:xml filename:credentials.xml language:XML"`
+
+##### Find secrets in .circleci
+`python git-wild-hunt.py -s "extension:yml path:.circleci filename:config language:YAML"`
+
+##### Generic credentials.yml search 
+`python git-wild-hunt.py -s "extension:yml filename:credentials.yml language:YAML"`
 
 
 ### Usage
@@ -73,7 +83,7 @@ optional arguments:
   -v, --version         shows current git-wild-hunt version
 ```
 
-### [`regexes.json`](https://github.com/d1vious/git-wild-hunt/blob/master/regexes.json)
+### What checks get run [`regexes.json`](https://github.com/d1vious/git-wild-hunt/blob/master/regexes.json)
 This file contains all the regexes that will be used to check against the raw content filed returned for a [search](#github-search-examples). Feel free to add/modify and include any specific ones that match the credential you are trying to find. 
 
 Currently verified credentials via regex:
@@ -127,3 +137,6 @@ Currently verified credentials via regex:
 ### Credits & References
 
 Inspiration to write this tool came from the [shhgit](https://github.com/eth0izzle/shhgit/) project
+
+### TO DO
+* better error handling

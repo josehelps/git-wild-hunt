@@ -2,20 +2,11 @@
 A tool to hunt for credentials in the Github wild AKA git*hunt
 ![](static/wildhunt.jpg)
 
-
-### Usage
-
-```
-usage: git-wild-hunt.py [-h] -s SEARCH [-c CONFIG] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -s SEARCH, --search SEARCH
-                        search to execute
-  -c CONFIG, --config CONFIG
-                        config file path
-  -v, --version         shows current git-wild-hunt version
-```
+### Getting started
+ 
+1. [Install](#installation) the tool
+2. [Configure](#configuration) your github token
+3. [Search](#github-search-examples) for credentials
 
 ### Installation 
 
@@ -26,7 +17,7 @@ optional arguments:
 
 Continue to [configuring](#configuration) a github API key
 
-### Configuration [`git-wild-hunt.conf`]()
+### Configuration [`git-wild-hunt.conf`](https://github.com/d1vious/git-wild-hunt/blob/master/git-wild-hunt.conf)
 
 Make sure you set a Github token if you need to create one for your account follow [these](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) instructions. 
 
@@ -51,17 +42,41 @@ regexes = regexes.json
 
 ### Github search examples
 
-* Searching for Jenkins credentials
-* Find GCP JWT token files
-* Find secrets in .circleci 
-* Find AWS secrets
-* Find ...
+the *-s* flag accepts any github [advance search](https://github.com/search/advanced) query, see some examples below
+
+##### Searching for Jenkins credentials.xml file
+`python git-wild-hunt.py -s "extension:yml+path:.circleci+filename:config+language:YAML"`
+
+##### Find GCP JWT token files
+`python git-wild-hunt.py -s"extension:json+filename:creds+language:JSON"`
+
+#### Find secrets in .circleci
+`python git-wild-hunt.py -s "extension:yml+path:.circleci+filename:config+language:YAML"`
+
+#### Find AWS API secrets
 
 
-### [`regexes.json`]()
+#### Generic credentials.yml search `python git-wild-hunt.py -s "extension:yml+filename:credentials.yml+language:YAML"`
+
+
+### Usage
+
+```
+usage: git-wild-hunt.py [-h] -s SEARCH [-c CONFIG] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SEARCH, --search SEARCH
+                        search to execute
+  -c CONFIG, --config CONFIG
+                        config file path
+  -v, --version         shows current git-wild-hunt version
+```
+
+### [`regexes.json`](https://github.com/d1vious/git-wild-hunt/blob/master/regexes.json)
 This file contains all the regexes that will be used to check against the raw content filed returned for a [search](#github-search-examples). Feel free to add/modify and include any specific ones that match the credential you are trying to find. 
 
-List of checked credentials via regex:
+Currently verified credentials via regex:
 
 *   AWS API Key
 *   Amazon AWS Access Key ID
@@ -104,9 +119,11 @@ List of checked credentials via regex:
 
 ### Author
 
-Jose Hernandez [@d1vious]()
-Rod Soto [@rsoto]()
+* Jose Hernandez [@d1vious](https://twitter.com/d1vious)
+
+### Contributor 
+ * Rod Soto [@rodsoto](https://twitter.com/rodsoto)
 
 ### Credits & References
 
-Inspiration [shhgit](https://github.com/eth0izzle/shhgit/)
+Inspiration to write this tool came from the [shhgit](https://github.com/eth0izzle/shhgit/) project

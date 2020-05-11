@@ -180,11 +180,13 @@ if __name__ == "__main__":
 
     regexes = load_regexes(config['regexes'])
 
-    if config['github_token']:
-        results = search_github(config['github_token'], search)
-    else:
+    github_token = config['github_token']
+
+    if github_token == "TOKENHERE":
         print("ERROR: git-wild-hunt failed to find a github_token in the config file at {0}..exiting".format(tool_config))
         sys.exit(1)
+    else:
+        results = search_github(github_token, search)
     
     # lets process the search results
     count = 0 

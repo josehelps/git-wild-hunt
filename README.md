@@ -7,6 +7,11 @@ A tool to hunt for credentials in the Github wild AKA git*hunt
 1. [Install](#installation) the tool
 2. [Configure](#configuration) your github token
 3. [Search](#github-search-examples) for credentials
+4. See results `cat results.json | jq`
+
+:tv: **Demo**
+
+![](static/demo.gif)
 
 ### Installation 
 

@@ -89,7 +89,7 @@ optional arguments:
 ```
 
 ### What checks get run [`regexes.json`](https://github.com/d1vious/git-wild-hunt/blob/master/regexes.json)
-This file contains all the regexes that will be used to check against the raw content filed returned for a [search](#github-search-examples). Feel free to add/modify and include any specific ones that match the credential you are trying to find. 
+This file contains all the regexes that will be used to check against the raw content filed returned for a [search](#github-search-examples). Feel free to add/modify and include any specific ones that match the credential you are trying to find. This was graciously borrowed from [truffleHog](https://github.com/dxa4481/truffleHogRegexes/blob/master/truffleHogRegexes/regexes.json)
 
 Currently verified credentials via regex:
 

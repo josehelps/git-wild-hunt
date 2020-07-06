@@ -1,11 +1,11 @@
 # git-wild-hunt
-A tool to hunt for credentials in the Github wild AKA git*hunt
+A tool to hunt for credentials in the GitHub wild AKA git*hunt
 ![](static/wildhunt.jpg)
 
 ### Getting started
  
 1. [Install](#installation) the tool
-2. [Configure](#configuration) your github token
+2. [Configure](#configuration) your GitHub token
 3. [Search](#github-search-examples) for credentials
 4. See results `cat results.json | jq`
 
@@ -20,16 +20,16 @@ A tool to hunt for credentials in the Github wild AKA git*hunt
 1. `git clone https://github.com/d1vious/git-wild-hunt && cd git-wild-hunt` clone project and cd into the project dir
 2. `pip install virtualenv && virtualenv -p python3 venv && source venv/bin/activate && pip install -r requirements.txt` create virtualenv and install requirements
 
-Continue to [configuring](#configuration) a github API key
+Continue to [configuring](#configuration) a GitHub API key
 
 ### Configuration [`git-wild-hunt.conf`](https://github.com/d1vious/git-wild-hunt/blob/master/git-wild-hunt.conf)
 
-Make sure you set a Github token if you need to create one for your account follow [these](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) instructions. 
+Make sure you set a GitHub token if you need to create one for your account follow [these](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) instructions. 
 
 ```
 [global]
 github_token = ''
-# github token for searching
+# GitHub token for searching
 
 output = results.json
 # stores matches in JSON here
@@ -45,9 +45,9 @@ regexes = regexes.json
 # regexes to check the git wild hunt search against
 ```
 
-### Github search examples
+### GitHub search examples
 
-the **-s** flag accepts any github [advance search](https://github.com/search/advanced) query, see some examples below
+the **-s** flag accepts any GitHub [advance search](https://github.com/search/advanced) query, see some examples below
 
 ##### Find GCP JWT token files
 `python git-wild-hunt.py -s "extension:json filename:creds language:JSON"`
@@ -61,7 +61,7 @@ the **-s** flag accepts any github [advance search](https://github.com/search/ad
 ##### Find GSUtils configs
 `python git-wild-hunt.py -s "path:.gsutil filename:credstore2"`
 
-##### Find kubernetes config files
+##### Find Kubernetes config files
 `python git-wild-hunt.py -s "path:.kube filename:config"`
 
 ##### Searching for Jenkins credentials.xml file

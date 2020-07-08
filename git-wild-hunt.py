@@ -27,7 +27,11 @@ def search_github(github_token, search):
     #extension:yml+path:.circleci+filename:config+language:YAML
     r = requests.get( url, headers=h, timeout=30)
     result = r.json()
-    log.info("total results: {}".format(result['total_count']))
+    if result['total_count'] > 0
+        log.info("total results: {}".format(result['total_count']))
+    else:
+        log.error("no results found for the search: {}".format(search))
+        sys.exit(1)
     
     # first check for rate limit
     if 'documentation_url' in result:

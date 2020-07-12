@@ -27,12 +27,12 @@ def search_github(github_token, search):
     #extension:yml+path:.circleci+filename:config+language:YAML
     r = requests.get( url, headers=h, timeout=30)
     result = r.json()
-    if result['total_count'] > 0
+    if result['total_count'] > 0:
         log.info("total results: {}".format(result['total_count']))
     else:
         log.error("no results found for the search: {}".format(search))
         sys.exit(1)
-    
+
     # first check for rate limit
     if 'documentation_url' in result:
         if result['documentation_url'] == "https://developer.github.com/v3/#abuse-rate-limits":
@@ -43,6 +43,9 @@ def search_github(github_token, search):
     if 'items' in result:
         for i in result['items']:
             results.append(i)
+            #limit to 5 results for testing only
+            #if len(results) > 5:
+            #    return results
 
     # check if there is pagination
     link = r.headers.get('link')
@@ -68,7 +71,7 @@ def process_pages(github_token, url, results):
     h = {"Authorization":"token "+ github_token}
     r = requests.get( url, headers=h, timeout=30)
     result = r.json()
-    
+
     # first check for rate limit
     if 'documentation_url' in result:
         if result['documentation_url'] == "https://developer.github.com/v3/#abuse-rate-limits":
@@ -89,7 +92,7 @@ def process_pages(github_token, url, results):
         log.info("all done processing results")
         return results
     return process_pages(github_token, next_url, results)
-        
+
 
 
 # given a link header from github, find the link for the next url which they use for pagination
@@ -114,10 +117,10 @@ def getcode( url ):
     try:
         r = requests.get( url, timeout=10 )
         return r.text
-    except: 
+    except:
         log.error("timeout requesting url: {0} .. continuing".format(url))
         code = None
-        return code 
+        return code
 
 def findleaks(conf, regexes):
     match_creds = []
@@ -136,6 +139,10 @@ def findleaks(conf, regexes):
                 match_details['check'] = check
                 match_details['matches']  = matches
                 match_details['timestamp']  = str(datetime.datetime.utcnow().isoformat())
+                # add owner data
+                match_details['owner'] = conf['repository']['owner']['login']
+                match_details['owner_url'] = conf['repository']['owner']['html_url']
+                match_details['owner_type'] = conf['repository']['owner']['type']
                 match_creds.append(match_details)
                 log.warning("url: {0}\ncheck: {1} matches: {2}".format(url, check, matches))
     return match_creds
@@ -146,6 +153,30 @@ def write_leaks(leaks, output_path):
             json.dump(leaks, outfile)
     except Exection as e:
         log.error("writing result file: {0}".format(str(e)))
+
+
+def get_user_details(leak, github_token):
+    results = []
+    h = {"Authorization":"token "+ github_token}
+    url = "https://api.github.com/users/" + leak['owner']
+    #extension:yml+path:.circleci+filename:config+language:YAML
+    r = requests.get( url, headers=h, timeout=30)
+    result = r.json()
+    leak['name'] = result['name']
+    leak['email'] = result['email']
+    leak['company'] = result['company']
+    leak['blog'] = result['blog']
+    leak['location'] = result['location']
+    leak['twitter_username'] = result['twitter_username']
+    leak['owner_created'] = result['created_at']
+    leak['owner_last_updated'] = result['updated_at']
+    leak['owner_bio'] = result['bio']
+    return leak
+
+
+
+
+
 
 if __name__ == "__main__":
     # grab oarguments
@@ -160,7 +191,7 @@ if __name__ == "__main__":
     ARG_VERSION = args.version
     config = args.config
     search = args.search
-    
+
     # needs config parser here
     tool_config = Path(config)
     if tool_config.is_file():
@@ -192,9 +223,9 @@ if __name__ == "__main__":
     else:
         s = search.replace(" ", "+")
         results = search_github(github_token, s)
-    
+
     # lets process the search results
-    count = 0 
+    count = 0
     all_leaks = []
     for conf in results:
         count += 1
@@ -204,14 +235,8 @@ if __name__ == "__main__":
         else:
             continue
         for l in leaks:
+            l = get_user_details(l, github_token)
             all_leaks.append(l)
 
     # write output of all leaks
     write_leaks(all_leaks, config['output'])
-        
-
-
-
-
-
-

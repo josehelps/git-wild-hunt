@@ -6,7 +6,6 @@
     "PGP private key block": "-----BEGIN PGP PRIVATE KEY BLOCK-----",
     "Amazon AWS Access Key ID": "AKIA[0-9A-Z]{16}",
     "Amazon MWS Auth Token": "amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
-    "AWS API Key": "AKIA[0-9A-Z]{16}",
     "Facebook Access Token": "EAACEdEose0cBA[0-9A-Za-z]+",
     "Facebook OAuth": "[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].*['|\"][0-9a-f]{32}['|\"]",
     "GitHub": "[g|G][i|I][t|T][h|H][u|U][b|B].*['|\"][0-9a-zA-Z]{35,40}['|\"]",

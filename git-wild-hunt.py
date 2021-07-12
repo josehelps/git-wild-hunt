@@ -7,9 +7,12 @@ import re
 import os
 import sys
 import datetime
+import time
+from tqdm import tqdm
 from pathlib import Path
 from modules.CustomConfigParser import CustomConfigParser
 from modules import logger
+
 
 VERSION = 1
 
@@ -22,23 +25,34 @@ def load_regexes(regexes_path):
 
 def search_github(github_token, search):
     results = []
-    h = {"Authorization":"token "+ github_token}
+    h = {
+        "Authorization":"token "+ github_token,
+        "User-Agent": "Git-Wild-Hunt 1.0"
+    }
     url = "https://api.github.com/search/code?per_page=100&q=" + search
     #extension:yml+path:.circleci+filename:config+language:YAML
     r = requests.get( url, headers=h, timeout=30)
     result = r.json()
-    if result['total_count'] > 0:
-        log.info("total results: {}".format(result['total_count']))
-    else:
-        log.error("no results found for the search: {}".format(search))
+    try:
+        if result['total_count'] > 0:
+            log.info("total results: {}".format(result['total_count']))
+        else:
+            log.error("no results found for the search: {}".format(search))
+            sys.exit(1)
+    except:
+        log.error("using github search api: {0}".format(json.dumps(result,indent=2)))
         sys.exit(1)
+
+
 
     # first check for rate limit
     if 'documentation_url' in result:
-        if result['documentation_url'] == "https://developer.github.com/v3/#abuse-rate-limits":
+        if result['documentation_url'] == "https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#abuse-rate-limits":
             r = requests.get('https://api.github.com/rate_limit', headers=h, timeout=30)
-            log.error("we have hit githubs rate limit, cool off, return on: {}..exiting".format(r.headers.get('X-RateLimit-Reset')))
-            sys.exit(1)
+            timestamp = datetime.datetime.fromtimestamp(int(r.headers.get('X-RateLimit-Reset')))
+            log.error("we have hit githubs rate limit, cool off for 300 seconds")
+            for i in tqdm(range(300)):
+                time.sleep(1)
 
     if 'items' in result:
         for i in result['items']:
@@ -53,6 +67,8 @@ def search_github(github_token, search):
         log.info("all done processing results")
         return result
     next_url = find_next(r.headers['link'])
+
+    time.sleep(60)
     # process pagination of results
     if next_url is None:
         log.info("all done processing results")
@@ -65,18 +81,25 @@ def search_github(github_token, search):
 def process_pages(github_token, url, results):
     log.info("processing page: {0}".format(url[-1]))
     # limiting for testing
-    if int(url[-1]) >= 4:
-        return results
+    #if int(url[-1]) >= 4:
+    #    return results
 
-    h = {"Authorization":"token "+ github_token}
+    h = {
+        "Authorization":"token "+ github_token,
+        "User-Agent": "Git-Wild-Hunt 1.0"
+    }
     r = requests.get( url, headers=h, timeout=30)
     result = r.json()
 
     # first check for rate limit
     if 'documentation_url' in result:
-        if result['documentation_url'] == "https://developer.github.com/v3/#abuse-rate-limits":
-            log.error("we have git githubs rate limit, cool off, return on: {} ..exiting".format(r.headers.get('X-RateLimit-Reset')))
-            sys.exit(1)
+        if result['documentation_url'] == "https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#abuse-rate-limits":
+            timestamp = datetime.datetime.fromtimestamp(int(r.headers.get('X-RateLimit-Reset')))
+            log.error("we have hit githubs rate limits, cool off for 300 seconds")
+            for i in tqdm(range(300)):
+                time.sleep(1)
+            return process_pages(github_token, next_url, results)
+
     # process results if we haven't hit any
     if 'items' in result:
         for i in result['items']:
@@ -87,13 +110,13 @@ def process_pages(github_token, url, results):
     if link is None:
         return result
     next_url = find_next(r.headers['link'])
+
+    time.sleep(60)
     # process pagination of results
     if next_url is None:
         log.info("all done processing results")
         return results
     return process_pages(github_token, next_url, results)
-
-
 
 # given a link header from github, find the link for the next url which they use for pagination
 def find_next(link):

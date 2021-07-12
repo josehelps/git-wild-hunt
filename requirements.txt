@@ -3,4 +3,4 @@ chardet==3.0.4
 idna==2.9
 requests==2.23.0
 tqdm==4.61.2
-urllib3==1.25.9
+urllib3==1.26.5

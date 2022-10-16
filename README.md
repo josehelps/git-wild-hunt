@@ -134,7 +134,7 @@ Currently verified credentials via regex:
 
 ### Author
 
-* Jose Hernandez [@d1vious](https://twitter.com/d1vious)
+* Jose Hernandez [@_josehelps](https://twitter.com/_josehelps)
 
 ### Contributor 
  * Rod Soto [@rodsoto](https://twitter.com/rodsoto)
